@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureShift</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:        #0a0d10;
+    --panel:     #10151a;
+    --panel-2:   #151b21;
+    --line:      #232b32;
+    --text:      #dce4e8;
+    --muted:     #6b7a84;
+    --cold:      #5aa9e6;   /* ciphertext / encrypted */
+    --warm:      #e0a052;   /* plaintext / decrypted */
+    --cold-dim:  #5aa9e622;
+    --warm-dim:  #e0a05222;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 10%, #101820 0%, transparent 40%),
+      radial-gradient(circle at 85% 90%, #1a1310 0%, transparent 40%),
+      repeating-linear-gradient(0deg, #ffffff03 0px, #ffffff03 1px, transparent 1px, transparent 3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .frame {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* Terminal chrome bar */
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #2a333a; }
+  .titlebar span.path {
+    margin-left: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0 0 10px 10px;
+    padding: 32px 28px 28px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .brand h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    margin: 0;
+    background: linear-gradient(90deg, var(--warm), var(--cold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .brand .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 4px 0 22px;
+  }
+
+  /* Shift ring signature element */
+  .shiftring {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .shiftring .row {
+    display: flex;
+    justify-content: space-between;
+    transition: color 0.4s ease;
+  }
+  .shiftring .row.plain { color: var(--warm); margin-bottom: 4px; }
+  .shiftring .row.cipher { color: var(--cold); }
+  .shiftring .meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .shiftring.pulse-enc .row.cipher { animation: pulseCold 0.6s ease; }
+  .shiftring.pulse-dec .row.plain { animation: pulseWarm 0.6s ease; }
+  @keyframes pulseCold { 0%{ text-shadow:0 0 0 var(--cold);} 40%{ text-shadow:0 0 8px var(--cold);} 100%{ text-shadow:0 0 0 var(--cold);} }
+  @keyframes pulseWarm { 0%{ text-shadow:0 0 0 var(--warm);} 40%{ text-shadow:0 0 8px var(--warm);} 100%{ text-shadow:0 0 0 var(--warm);} }
+
+  label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    background: #0d1114;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    padding: 12px 14px;
+    resize: vertical;
+    min-height: 76px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  textarea:focus { border-color: #3a454d; }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0 22px;
+  }
+
+  button.op {
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.12s ease, filter 0.12s ease;
+  }
+  button.op:active { transform: scale(0.98); }
+
+  .btn-encrypt {
+    background: var(--cold-dim);
+    border-color: #5aa9e655;
+    color: var(--cold);
+  }
+  .btn-encrypt:hover { filter: brightness(1.3); }
+
+  .btn-decrypt {
+    background: var(--warm-dim);
+    border-color: #e0a05255;
+    color: var(--warm);
+  }
+  .btn-decrypt:hover { filter: brightness(1.2); }
+
+  .output {
+    background: #0d1114;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px;
+    min-height: 60px;
+    position: relative;
+  }
+  .output .label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .output .op-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: none;
+  }
+  .op-badge.show { display: inline-block; }
+  .op-badge.enc { background: var(--cold-dim); color: var(--cold); }
+  .op-badge.dec { background: var(--warm-dim); color: var(--warm); }
+
+  #resultText {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    line-height: 1.5;
+    word-break: break-word;
+    color: var(--text);
+    min-height: 20px;
+  }
+  #resultText.placeholder { color: var(--muted); font-size: 13px; }
+
+  .copybtn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .copybtn:hover { color: var(--text); border-color: #3a454d; }
+
+  .footer-note {
+    margin-top: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 5px;
+    background: #4a5560;
+  }
+  .status-dot.live { background: #56d18b; box-shadow: 0 0 5px #56d18b; }
+  .status-dot.down { background: #d16656; box-shadow: 0 0 5px #d16656; }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="titlebar">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <span class="path">localhost:8080/api</span>
+  </div>
+
+  <div class="card">
+    <div class="brand">
+      <h1>SecureShift</h1>
+      <span class="tag">CAESAR · SHIFT 5</span>
+    </div>
+    <p class="subtitle">Encrypt and decrypt text through a Spring Boot cipher service.</p>
+
+    <div class="shiftring" id="shiftRing">
+      <div class="row plain">A B C D E F G H I J K L M</div>
+      <div class="row cipher">F G H I J K L M N O P Q R</div>
+      <div class="meta"><span>PLAINTEXT</span><span id="shiftLabel">shift &gt;&gt; 5</span><span>CIPHERTEXT</span></div>
+    </div>
+
+    <label for="inputText">Input message</label>
+    <textarea id="inputText" placeholder="Type a message to transform...">Hello this is Harshal</textarea>
+
+    <div class="actions">
+      <button class="op btn-encrypt" onclick="runOp('encrypt')">ENCRYPT →</button>
+      <button class="op btn-decrypt" onclick="runOp('decrypt')">← DECRYPT</button>
+    </div>
+
+    <div class="output">
+      <div class="label-row">
+        <label style="margin:0;">Result</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="op-badge enc" id="badgeEnc">ENCRYPTED</span>
+          <span class="op-badge dec" id="badgeDec">DECRYPTED</span>
+          <button class="copybtn" onclick="copyResult()">copy</button>
+        </div>
+      </div>
+      <div id="resultText" class="placeholder">Output will appear here...</div>
+    </div>
+
+    <div class="footer-note">
+      <span><span class="status-dot" id="statusDot"></span><span id="statusText">checking backend...</span></span>
+      <span>com.example.demo</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = "https://secureshift-ujya.onrender.com/api";
+
+  async function checkStatus() {
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+    try {
+      const res = await fetch(`${API_BASE}/encrypt?message=ping`);
+      if (res.ok) {
+        dot.className = 'status-dot live';
+        txt.textContent = 'backend live';
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      dot.className = 'status-dot down';
+      txt.textContent = 'backend unreachable';
+    }
+  }
+
+  async function runOp(op) {
+    const input = document.getElementById('inputText').value;
+    const resultEl = document.getElementById('resultText');
+    const ring = document.getElementById('shiftRing');
+    const badgeEnc = document.getElementById('badgeEnc');
+    const badgeDec = document.getElementById('badgeDec');
+    const shiftLabel = document.getElementById('shiftLabel');
+
+    if (!input.trim()) {
+      resultEl.textContent = 'Enter a message first.';
+      resultEl.className = 'placeholder';
+      return;
+    }
+
+    resultEl.textContent = 'Processing...';
+    resultEl.className = 'placeholder';
+
+    try {
+      const res = await fetch(`${API_BASE}/${op}?message=${encodeURIComponent(input)}`);
+      if (!res.ok) throw new Error('Request failed: ' + res.status);
+      const data = await res.json();
+
+      resultEl.textContent = data.transformedText;
+      resultEl.className = '';
+
+      badgeEnc.classList.toggle('show', op === 'encrypt');
+      badgeDec.classList.toggle('show', op === 'decrypt');
+
+      ring.className = 'shiftring ' + (op === 'encrypt' ? 'pulse-enc' : 'pulse-dec');
+      shiftLabel.innerHTML = op === 'encrypt' ? 'shift &gt;&gt; 5' : 'shift &lt;&lt; 5';
+      void ring.offsetWidth;
+      ring.className = 'shiftring ' + (op === 'encrypt' ? 'pulse-enc' : 'pulse-dec');
+
+    } catch (err) {
+      resultEl.textContent = 'Could not reach backend. Is DemoApplication running on port 8080?';
+      resultEl.className = 'placeholder';
+      checkStatus();
+    }
+  }
+
+  function copyResult() {
+    const text = document.getElementById('resultText').textContent;
+    if (!text || text.includes('Output will appear') || text.includes('Processing')) return;
+    navigator.clipboard.writeText(text);
+  }
+
+  checkStatus();
+</script>
+
+</body>
+</html>
