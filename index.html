@@ -370,8 +370,11 @@
   const secure = renderWord('SECURE');
   const shift = renderWord('SHIFT');
   
-  // Combine them with spacing instead of adding newlines
-  document.getElementById('asciiLogo').textContent = secure + '   ' + shift;
+  // Calculate padding to center 'SHIFT' under 'SECURE'
+  const shiftCentered = '   ' + shift;
+  
+  // Display with a newline for vertical stacking
+  document.getElementById('asciiLogo').textContent = secure + ' \n\n ' + shiftCentered;
 }
   buildLogo();
 
