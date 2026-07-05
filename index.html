@@ -84,12 +84,17 @@
   }
 
   #asciiLogo {
-    position:relative; font-family:'IBM Plex Mono',monospace; color: var(--green);
-    font-size: clamp(4px, 1.55vw, 13px);
-    line-height: 1.05; letter-spacing:0; white-space:pre; margin:0 0 22px;
-    text-shadow: 0 0 4px var(--green), 0 0 14px var(--green-dim2), 0 0 32px var(--green-dim2);
-    animation: flicker 4.2s linear infinite;
-  }
+  position: relative;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--green);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 22px;
+  text-shadow: 0 0 5px var(--green), 0 0 15px var(--green-dim2);
+  animation: flicker 4.2s linear infinite;
+}
   @keyframes flicker {
     0%, 3%, 6%, 100% { opacity: 1; text-shadow: 0 0 4px var(--green), 0 0 14px var(--green-dim2), 0 0 32px var(--green-dim2); }
     4%   { opacity: 0.55; text-shadow: none; }
@@ -257,7 +262,7 @@
 </nav>
 
 <section class="hero" id="top">
-  <pre id="asciiLogo"></pre>
+  <div id="asciiLogo" class="text-logo">SECURESHIFT</div>
   <div class="tagline">Secure &middot; Shift &middot; Protect</div>
   <p class="sub">Encrypt and decrypt your text using a classic Caesar cipher, served by a real Spring Boot backend.</p>
   <button class="cta-btn" onclick="startEncrypting()">START ENCRYPTING ↓</button>
@@ -344,7 +349,7 @@
   let currentMode = 'encrypt';
 
   // ---- ASCII block font (5x7 bitmap) ----
-  const FONT = {
+ /* const FONT = {
     'S': ["01111","10000","10000","01110","00001","00001","11110"],
     'E': ["11111","10000","10000","11110","10000","10000","11111"],
     'C': ["01111","10000","10000","10000","10000","10000","01111"],
@@ -367,12 +372,11 @@
     return rows.join('\n');
   }
 
-  function buildLogo() {
-    const logo = renderWord("SECURESHIFT");
-    document.getElementById("asciiLogo").textContent = logo;
+  // The logo is now handled by CSS in the HTML
+function buildLogo() {
+  // Logic removed: Logo is now static HTML
 }
-
-buildLogo();
+buildLogo();*/
   
 
   function startEncrypting() {
