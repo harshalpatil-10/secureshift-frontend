@@ -368,16 +368,12 @@
   }
 
   function buildLogo() {
-  const secure = renderWord('SECURE');
-  const shift = renderWord('SHIFT');
-  
-  // Calculate padding to center 'SHIFT' under 'SECURE'
-  const shiftCentered = '   ' + shift;
-  
-  // Display with a newline for vertical stacking
-  document.getElementById('asciiLogo').textContent = secure + ' \n\n ' + shiftCentered;
+    const logo = renderWord("SECURESHIFT");
+    document.getElementById("asciiLogo").textContent = logo;
 }
-  buildLogo();
+
+buildLogo();
+  
 
   function startEncrypting() {
     const tool = document.getElementById('tool');
