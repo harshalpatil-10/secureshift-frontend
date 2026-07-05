@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SecureShift</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
   :root{
     --bg:        #060a08;
     --panel:     #0b120ecc;
@@ -85,14 +84,13 @@
 
   #asciiLogo {
   position: relative;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'VT323', monospace; /* Updated to VT323 */
   color: var(--green);
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 56px; /* VT323 looks best slightly larger */
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   margin: 0 0 22px;
-  text-shadow: 0 0 5px var(--green), 0 0 15px var(--green-dim2);
+  text-shadow: 0 0 5px var(--green), 0 0 10px var(--green-dim2);
   animation: flicker 4.2s linear infinite;
 }
   @keyframes flicker {
