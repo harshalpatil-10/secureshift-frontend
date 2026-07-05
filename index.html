@@ -325,9 +325,17 @@
 
 <footer>
   <span>© 2026 SecureShift. All rights reserved.</span>
-  <div class="social">
-    <a href="https://github.com/harshalpatil-10" target="_blank" rel="noopener">GitHub</a>
-  </div>
+  <div class="social-links">
+  <a href="https://github.com/harshalpatil-10" target="_blank" aria-label="GitHub">
+    <i class="fab fa-github"></i>
+  </a>
+  <a href="https://www.linkedin.com/in/harshalpatil5/" target="_blank" aria-label="LinkedIn">
+    <i class="fab fa-linkedin"></i>
+  </a>
+  <a href="https://instagram.com/harshall.patil" target="_blank" aria-label="Instagram">
+    <i class="fab fa-instagram"></i>
+  </a>
+</div>
 </footer>
 
 <script>
@@ -359,15 +367,12 @@
   }
 
   function buildLogo() {
-    const secure = renderWord('SECURE');
-    const shift = renderWord('SHIFT');
-    // center SHIFT under SECURE roughly
-    const secureWidth = secure.split('\n')[0].length;
-    const shiftWidth = shift.split('\n')[0].length;
-    const pad = ' '.repeat(Math.max(0, Math.floor((secureWidth - shiftWidth) / 2)));
-    const shiftCentered = shift.split('\n').map(l => pad + l).join('\n');
-    document.getElementById('asciiLogo').textContent = secure + '\n\n' + shiftCentered;
-  }
+  const secure = renderWord('SECURE');
+  const shift = renderWord('SHIFT');
+  
+  // Combine them with spacing instead of adding newlines
+  document.getElementById('asciiLogo').textContent = secure + '   ' + shift;
+}
   buildLogo();
 
   function startEncrypting() {
