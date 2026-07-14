@@ -1,6 +1,6 @@
 # CipherShift Frontend
 
-Frontend for the CipherShift encryption and decryption application.
+Front-end for the CipherShift encryption and decryption application.
 
 ## Features
 
